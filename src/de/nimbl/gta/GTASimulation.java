@@ -16,7 +16,7 @@ public class GTASimulation {
 
         while(!ray.core.WindowShouldClose()) {
             ray.core.BeginDrawing();
-            ray.core.ClearBackground(Color.DARKGRAY);
+            ray.core.ClearBackground(Color.BLACK);
 
             //if(ray.core.IsMouseButtonPressed(Mouse.MouseButton.MOUSE_BUTTON_LEFT)) {
             car.follow(new Vec2(ray.core.GetMouseX(), ray.core.GetMouseY()));

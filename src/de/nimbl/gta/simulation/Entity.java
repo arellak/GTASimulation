@@ -3,7 +3,7 @@ package de.nimbl.gta.simulation;
 import com.raylib.java.Raylib;
 import de.nimbl.gta.math.Vec2;
 
-public abstract class Entity implements IRenderable{
+public abstract class Entity implements IRenderable {
 
     protected Raylib ray;
 

@@ -9,16 +9,16 @@ public class Car extends Entity {
     private Vec2 acceleration;
     private Vec2 velocity;
 
-    private float maxSpeed;
+    private final float maxSpeed = 5.0f;
+    private final float maxForce = 3.0f;
 
     public Car(final Raylib ray) {
         super(ray);
-        setPos(new Vec2(100, 100));
         setSize(new Vec2(20, 20));
+        setPos(new Vec2(0, 0));
 
-        this.acceleration = new Vec2(0, 0);
-        this.velocity = new Vec2(0, 0);
-        this.maxSpeed = 1f;
+        acceleration = new Vec2(0, 0);
+        velocity = new Vec2(0, 0);
     }
 
     public void follow(final Vec2 position) {
@@ -26,31 +26,27 @@ public class Car extends Entity {
         way.sub(getPos());
         way.setMagnitude(maxSpeed);
 
-        Vec2 push = new Vec2(way.getX(), way.getY());
+        Vec2 push = new Vec2(way.getX(), way.getY(), maxForce);
         push.sub(velocity);
-        push.setLimit(maxSpeed);
         push(push);
     }
 
     public void push(final Vec2 push) {
-        acceleration = new Vec2(push.getX(), push.getY());
-        acceleration.add(acceleration);
+        acceleration.add(push);
     }
 
     @Override
     public void update() {
-        velocity = new Vec2();
         velocity.add(acceleration);
+        velocity.setLimit(maxSpeed);
 
-        Vec2 newPos = new Vec2(getPos().getX(), getPos().getY());
-        newPos.add(velocity);
-        newPos.setLimit(maxSpeed);
-        setPos(newPos);
+        getPos().add(velocity);
+        setPos(this.getPos());
         acceleration.set(0, 0);
     }
 
     @Override
     public void render() {
-        ray.shapes.DrawRectangle((int) getPos().getX(), (int) getPos().getY(), (int) getSize().getX(), (int) getSize().getY(), Color.BLACK);
+        ray.shapes.DrawCircle((int) (getPos().getX()), (int) (getPos().getY()), (int) getSize().getX(), Color.DARKGREEN);
     }
 }
