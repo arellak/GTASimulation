@@ -77,19 +77,13 @@ public class Vec2 {
     }
 
     public void normalize() {
-        float newX = getX() / getLength();
-        if(Float.isNaN(newX)) {
-            setX(0);
-        } else {
-            setX(newX);
-        }
+        float length = getLength() == 0 ? 1 : getLength();
 
-        float newY = getY() / getLength();
-        if(Float.isNaN(newY)) {
-            setY(0);
-        } else {
-            setY(newY);
-        }
+        float newX = getX() / length;
+        setX(newX);
+
+        float newY = getY() / length;
+        setY(newY);
     }
 
     public void add(final Vec2 toAdd) {

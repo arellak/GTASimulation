@@ -4,6 +4,8 @@ import com.raylib.java.Raylib;
 import com.raylib.java.core.Color;
 import de.nimbl.gta.math.Vec2;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Car extends Entity {
 
     private Vec2 acceleration;
@@ -12,6 +14,8 @@ public class Car extends Entity {
     private final float maxSpeed = 5.0f;
     private final float maxForce = 3.0f;
 
+    private Color color;
+
     public Car(final Raylib ray) {
         super(ray);
         setSize(new Vec2(20, 20));
@@ -19,6 +23,17 @@ public class Car extends Entity {
 
         acceleration = new Vec2(0, 0);
         velocity = new Vec2(0, 0);
+        this.color = randomColor();
+    }
+
+    public Car(final Raylib ray, final Vec2 pos, final Vec2 size) {
+        super(ray);
+        setSize(size);
+        setPos(pos);
+
+        acceleration = new Vec2(0, 0);
+        velocity = new Vec2(0, 0);
+        this.color = randomColor();
     }
 
     public void follow(final Vec2 position) {
@@ -47,6 +62,15 @@ public class Car extends Entity {
 
     @Override
     public void render() {
-        ray.shapes.DrawCircle((int) (getPos().getX()), (int) (getPos().getY()), (int) getSize().getX(), Color.DARKGREEN);
+        ray.shapes.DrawCircle((int) (getPos().getX()), (int) (getPos().getY()), (int) getSize().getX(), this.color);
     }
+
+    public Color randomColor() {
+        Color random = new Color();
+        random.setR(ThreadLocalRandom.current().nextInt(255));
+        random.setG(ThreadLocalRandom.current().nextInt(255));
+        random.setB(ThreadLocalRandom.current().nextInt(255));
+        return random;
+    }
+
 }
