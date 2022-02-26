@@ -12,13 +12,13 @@ public class Vec2 {
         setY(0);
     }
 
-    public Vec2(final float x, final float y) {
+    public Vec2(float x, float y) {
         setLimit(0);
         setX(x);
         setY(y);
     }
 
-    public Vec2(final float x, final float y, final float limit) {
+    public Vec2(float x, float y, float limit) {
         setLimit(limit);
         setX(x);
         setY(y);
@@ -28,12 +28,12 @@ public class Vec2 {
         return limit != 0;
     }
 
-    public void set(final float x, final float y) {
+    public void set(float x, float y) {
         setX(x);
         setY(y);
     }
 
-    public void setX(final float x) {
+    public void setX(float x) {
         if(hasLimit()) {
             this.x = Math.min(x, this.limit);
             this.x = Math.max(this.x, -this.limit);
@@ -46,7 +46,7 @@ public class Vec2 {
         return this.x;
     }
 
-    public void setY(final float y) {
+    public void setY(float y) {
         if(hasLimit()) {
             this.y = Math.min(y, this.limit);
             this.y = Math.max(this.y, -this.limit);
@@ -59,7 +59,7 @@ public class Vec2 {
         return this.y;
     }
 
-    public void setLimit(final float limit) {
+    public void setLimit(float limit) {
         this.limit = limit;
     }
 
@@ -67,7 +67,7 @@ public class Vec2 {
         return this.limit;
     }
 
-    public void setMagnitude(final float amount) {
+    public void setMagnitude(float amount) {
         normalize();
         mult(amount);
     }
@@ -86,16 +86,24 @@ public class Vec2 {
         setY(newY);
     }
 
-    public void add(final Vec2 toAdd) {
+    public void add(Vec2 toAdd) {
         set(getX() + toAdd.getX(), getY() + toAdd.getY());
     }
 
-    public void sub(final Vec2 toSub) {
+    public void sub(Vec2 toSub) {
         set(getX() - toSub.getX(), getY() - toSub.getY());
     }
 
-    public void mult(final float toMult) {
+    public Vec2 subtract(Vec2 toSub) {
+        return new Vec2(getX() - toSub.getX(), getY() - toSub.getY());
+    }
+
+    public void mult(float toMult) {
         set(getX() * toMult, getY() * toMult);
+    }
+
+    public Vec2 multiplicate(float toMult) {
+        return new Vec2(getX() * toMult, getY() * toMult);
     }
 
     @Override
