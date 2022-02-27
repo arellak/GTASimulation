@@ -8,6 +8,7 @@ import de.nimbl.gta.math.Vec2;
 import com.raylib.java.core.rCore;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Car extends Entity {
@@ -19,7 +20,6 @@ public class Car extends Entity {
     private float maxForce = 0.7f;
 
     public Color color;
-    private Color oldColor;
 
     private float nearestDistance;
 
@@ -31,7 +31,6 @@ public class Car extends Entity {
         acceleration = new Vec2(0, 0);
         velocity = new Vec2(0, 0);
         this.color = randomColor();
-        this.oldColor = color;
     }
 
     public Car(Raylib ray, Vec2 pos, Vec2 size) {
@@ -42,7 +41,6 @@ public class Car extends Entity {
         acceleration = new Vec2(0, 0);
         velocity = new Vec2(0, 0);
         this.color = randomColor();
-        this.oldColor = color;
     }
 
     public void follow(Vec2 position) {
@@ -80,56 +78,50 @@ public class Car extends Entity {
         velocity.setLimit(maxSpeed);
 
         getPos().add(velocity);
-        setPos(this.getPos());
+        setPos(getPos());
         acceleration.set(0, 0);
 
         checkCollisions();
     }
 
     public void flee(List<Car> cars) {
-        Car nearest = cars.get(getNearestEntity(cars));
+        Optional<Car> nearest = getNearestEntity(cars);
+        if(nearest.isEmpty()) return;
+
         if(nearestDistance > 0) {
-            System.out.println(nearest.getPos().multiplicate(-1));
-            follow(nearest.getPos().multiplicate(-1));
+            follow(nearest.get().getPos().multiplicate(-1));
         }
     }
 
     public void checkCollisions() {
-        if (getPos().getX() > 800 - this.getSize().getX()) {
-            getPos().setX(this.getSize().getX());
+        if (getPos().getX() > 800 - getSize().getX()) {
+            getPos().setX(getSize().getX());
         }
 
-        if (getPos().getX() < this.getSize().getX()/2) {
-            getPos().setX(800 - this.getSize().getX());
+        if (getPos().getX() < getSize().getX()/2) {
+            getPos().setX(800 - getSize().getX());
         }
 
 
-        if (getPos().getY() < this.getSize().getY()/2) {
-            getPos().setY(600 - this.getSize().getY());
+        if (getPos().getY() < getSize().getY()/2) {
+            getPos().setY(600 - getSize().getY());
         }
 
-        if (getPos().getY() > 600 - this.getSize().getY()) {
-            getPos().setY(this.getSize().getY());
+        if (getPos().getY() > 600 - getSize().getY()) {
+            getPos().setY(getSize().getY());
         }
     }
 
     @Override
     public void render() {
-        if(this.oldColor == this.color) {
-            // System.out.println("new");
-            ray.shapes.DrawCircle((int) (getPos().getX()), (int) (getPos().getY()), (int) getSize().getX(), this.color);
-        } else {
-            //System.out.println("old");
-            ray.shapes.DrawCircle((int) (getPos().getX()), (int) (getPos().getY()), (int) getSize().getX(), this.oldColor);
-        }
+        ray.shapes.DrawCircle((int) (getPos().getX()), (int) (getPos().getY()), (int) getSize().getX(), this.color);
     }
 
-    public int getNearestEntity(List<Car> cars) {
-        if(cars.isEmpty()) return -1;
+    public Optional<Car> getNearestEntity(List<Car> cars) {
+        if(cars.isEmpty()) return Optional.empty();
 
-        int nearestIndex = 0;
         Car nearestCar = cars.get(0);
-        Vec2 nearestDistance = this.getPos().subtract(nearestCar.getPos());
+        Vec2 nearestDistance = getPos().subtract(nearestCar.getPos());
 
         float currentNearestX = Math.abs(nearestDistance.getX());
         float currentNearestY = Math.abs(nearestDistance.getY());
@@ -137,9 +129,8 @@ public class Car extends Entity {
 
         this.nearestDistance = currentNearestSum;
 
-        for(int i = 0; i < cars.size(); i++) {
-            Car car = cars.get(i);
-            Vec2 distance = this.getPos().subtract(car.getPos());
+        for (Car car : cars) {
+            Vec2 distance = getPos().subtract(car.getPos());
 
             float distanceX = Math.abs(distance.getX());
             float distanceY = Math.abs(distance.getY());
@@ -149,14 +140,13 @@ public class Car extends Entity {
             currentNearestY = Math.abs(nearestDistance.getY());
             currentNearestSum = currentNearestX + currentNearestY;
 
-            if(distanceSum < currentNearestSum) {
+            if (distanceSum < currentNearestSum) {
                 nearestCar = car;
-                nearestDistance = this.getPos().subtract(nearestCar.getPos());
-                nearestIndex = i;
+                nearestDistance = getPos().subtract(nearestCar.getPos());
                 this.nearestDistance = currentNearestSum;
             }
         }
-        return nearestIndex;
+        return Optional.of(nearestCar);
     }
 
     public Color randomColor() {
